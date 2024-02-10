@@ -1,54 +1,74 @@
+import Loading from './Loading.jsx';
 import {useState,useEffect} from 'react';
 const Body = () => {
 	const [searched, setSearched] = useState("");
 	 const [val, setVal] = useState([]);
-	const [ans, setAns] = useState([]);
+	const [ans, setAns] = useState("");
+	const [final, setFinal] = useState([]);
 	var content = "";
 	const data =  async ()  => {
 		var response = await fetch(' http://127.0.0.1:11434/api/chat ',
 			{method: 'POST',
 				headers:{ 'Content-Type': 'text/plain'},
 				body: JSON.stringify({
-					"model": "tinyllama",
+					"model": "dolphin-mistral",
 					"messages": [
 						{ "role": "user", "content": searched,  }
 					], "stream": false})
 			});
 		const maybe = await response.json();
-		setAns((files) => [...files, maybe.message.content]);
+		setFinal(prevFinal => {
+			const lastItemIndex = prevFinal.length - 1;
+			const updatedFinal = [...prevFinal];
+			updatedFinal[lastItemIndex] = {
+				...updatedFinal[lastItemIndex],
+				myans: {
+					you: searched,
+					message: maybe.message.content
+				}
+			};
+			 return updatedFinal;
+		});
 	}
 	return (
 		<div className="whole">
 		<div className="input">
-		<input type="text"  value={searched} onChange = { (e) => {
+		<input placeholder="Search....." className="inp" type="text"  value={searched} onChange = { (e) => {
 			setSearched(e.target.value);
 		}}></input>
-		<button onClick={() => {
+		<button className="search" onClick={() => {
 			if(searched===""){
 				alert("enter a prompt");
 			}
 			else{
-				setVal((files) => [...files, searched]);
+				setFinal((files) => [...files,
+					{myans:{
+					you: searched,
+					message:""
+				}}] )
 				data();
 			}
 		}}>search</button>
 		</div>
 
 		<div className="box"> 
-		{val.toReversed().map((data, index) => {
-			const i = ans.length < val.length ? ans[(ans.length-2) - index] : ans[(ans.length-1)-index];
-				return (
+		{final.toReversed().map((data, index) => {
+			return (
+				final.length > 0  ? (
 					<div className="content">
 					<h3>You</h3>
-					<h5 className="Ans">{data}</h5>
+					<h5 className="Ans">{data.myans.you}</h5>
 					<h3>Mini AI</h3>
-					{ ans.length < index-1 ? (
-						<h5>loading</h5>//set the loading to 
+					{data.myans.message===""  ? (
+						<Loading/>
 					) : (
-						<h5 className="Ans">{i}</h5>
+					<h5> {data.myans.message}</h5>
 					)}
 					</div>
+			) : (
+				<p>No data available</p>
 			)
+		)
 		})
 		}
 		</div>
