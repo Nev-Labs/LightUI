@@ -44,9 +44,19 @@
 .otherele > p {
 	padding: 10px;
 }
+.otherele > p a{
+	color: white;
+}
 .logo{
 	font-family: 'Workbench', sans-serif;
 }
+.logo > a{
+	color: white;
+}
+.logo > a:hover{
+	color: #f0f0f0;
+}
+
 .input{
 	padding-top: 50px;
 }

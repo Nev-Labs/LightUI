@@ -5,21 +5,34 @@ import viteLogo from '/vite.svg'
 import Body from './components/Body.jsx'
 import Header from './components/Header.jsx'
 import Models from './components/Models.jsx'
+import About from './components/About.jsx'
+import {createBrowserRouter, RouterProvider, Outlet} from 'react-router-dom'
+import HandleModels from './components/HandleModels.jsx'
 import './App.css'
 
 function App() {
-	const [mname, setMname] = useState("");
-	function handlecallback(data){
-		setMname(data);
-	}
-	console.log(mname);
 	return (
 		<>
 		<Header/>
-		<Models onData={handlecallback}/>
-		<Body n={mname}></Body>
+		<Outlet/>
 		</>
 	)
 }
-
-export default App
+const appRouter = createBrowserRouter([
+	{
+		path: "/",
+		element: <App />,
+		children: [
+			{
+				path: '/',
+				element: <HandleModels/>
+			},
+			{
+				path: '/about',
+				element: <About />
+			}
+		],
+		errorElement: <Error />
+	},
+]);
+export default appRouter ;

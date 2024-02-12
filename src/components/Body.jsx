@@ -72,7 +72,7 @@ const Body = (props) => {
 					<div className="content">
 					<h3>You</h3>
 					<h5 className="Ans">{data.myans.you}</h5>
-					<h3>Mini AI</h3>
+					<h3>MINI AI</h3>
 					{data.myans.message===""  ? (
 						<Loading/>
 					) : (
