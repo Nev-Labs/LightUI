@@ -6,10 +6,10 @@ function HandleModels() {
 	function handlecallback(data){
 		setMname(data);
 	}
-	console.log(mname);
+	// console.log(mname);
 	return (
 		<>
-		<Models onData={handlecallback}/>
+		{/* <Models onData={handlecallback}/> */}
 		<Body n={mname}></Body> 
 		</>
 	)

@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@1,200&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Workbench&display=swap');
-*{
-}
+/* *{
+} */
 .whole{
 	margin: 0px;
 	padding: 0px;
@@ -71,7 +71,7 @@
 	display: flex;
 	justify-content: center;
 	padding-top: 20px;
-	background: ;
+	/* background: ; */
 }
 .selector{
 	padding: 10px;
