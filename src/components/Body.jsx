@@ -1,63 +1,9 @@
-import Loading from "./Loading.jsx";
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
+import Header from "./Header.jsx";
 import { OLLAMA_BASE_ADDR } from "../utils/Constant.jsx";
+import ClearChat from "./ClearChat.jsx";
+
 const Body = (props) => {
-  //   console.log(props.n);
-  //   const [searched, setSearched] = useState("");
-  //   const [val, setVal] = useState([]);
-  //   const [ans, setAns] = useState("");
-  //   const [final, setFinal] = useState([]);
-  //   const [isdisabled, seteDisabled] = useState(false);
-  //   var content = "";
-  //   const data = async () => {
-  //     seteDisabled(true);
-  //     var response = await fetch(OLLAMA_BASE_ADDR + "/api/chat ", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "text/plain" },
-  //       body: JSON.stringify({
-  //         model: props.n,
-  //         messages: [{ role: "user", content: searched }],
-  //         stream: false,
-  //       }),
-  //     });
-  //     const maybe = await response.json();
-  //     setFinal((prevFinal) => {
-  //       const lastItemIndex = prevFinal.length - 1;
-  //       const updatedFinal = [...prevFinal];
-  //       updatedFinal[lastItemIndex] = {
-  //         ...updatedFinal[lastItemIndex],
-  //         myans: {
-  //           you: searched,
-  //           message: maybe.message.content,
-  //         },
-  //       };
-  //       return updatedFinal;
-  //     });
-  //     seteDisabled(false);
-  //   };
-
-  //   const check = (event) => {
-  //     if (event.key === "Enter" && !isdisabled) {
-  //       clicked();
-  //     }
-  //   };
-  //   const clicked = () => {
-  //     if (searched === "") {
-  //       alert("enter a prompt");
-  //     } else {
-  //       setFinal((files) => [
-  //         ...files,
-  //         {
-  //           myans: {
-  //             you: searched,
-  //             message: "",
-  //           },
-  //         },
-  //       ]);
-  //       data();
-  //     }
-  //   };
-
   const [searched, setSearched] = useState(""); // Current user input
   const [chatHistory, setChatHistory] = useState([]);
 
@@ -69,17 +15,14 @@ const Body = (props) => {
       "Why don’t skeletons fight each other? They don’t have the guts!",
     Goodbye: "Take care! See you soon.",
   };
+
   const handleUserInput = () => {
     if (searched.trim() === "") {
       alert("Please enter a prompt ");
       return;
     }
-    // this is like ai reasponce will contain wheather the responce of the promptm in responce map or the default failure to find the answer message
     const aiResponce =
       responseMap[searched] || "I don't have a response for that ";
-
-    // it the array of resopnce
-    // contain the previous chats flash on screen and new responce will destructure in you  and ai formate
 
     setChatHistory((previousChats) => [
       ...previousChats,
@@ -88,28 +31,31 @@ const Body = (props) => {
         ai: aiResponce,
       },
     ]);
-
-    // clear the input seacrched state after every responce
     setSearched("");
   };
 
-  //   when the user search the prompt by pressing enter  the handleUserInput function invoke
-
   const handleKeyPress = (e) => {
-    if (e.key == "Enter") handleUserInput();
+    if (e.key === "Enter") handleUserInput();
   };
+
+  // Function to clear the chat history
+  const clearChatHistory = () => {
+    setChatHistory([]);
+  };
+
   return (
     <>
+      {/* Header with Clear Chat Button */}
+      {/* <ClearChat onClearChat={clearChatHistory} /> */}
+
       <div
         id="main"
-        className="w-screen h-screen overflow-hidden fixed flex flex-col justify-center items-center bg-gradient-to-b from-[#0a122a] via-[#0f1e3d] to-[#0a122a]"
+        className="w-screen h-screen overflow-hidden fixed flex flex-col justify-center items-center bg-gradient-to-b from-[#0a122a] via-[#14001f] to-[#0a122a]"
       >
         {/* Chat Block */}
         <div
           id="chatBlock"
-          className={
-            " border border-gray-700 rounded-lg p-4 w-3/4 h-3/5 overflow-y-auto flex flex-col-reverse shadow-lg"
-          }
+          className="border border-gray-700 rounded-lg p-4 w-3/4 h-3/5 overflow-y-auto flex flex-col-reverse shadow-lg"
         >
           {chatHistory.length === 0 ? (
             <p className="text-gray-400 md:text-6xl text-2xl text-center my-auto">
@@ -148,7 +94,7 @@ const Body = (props) => {
         {/* Input Section */}
         <div
           id="inputPrompt"
-          className="w-full flex items-center justify-center  py-4 border-gray-700"
+          className="w-full flex items-center justify-center py-4 border-gray-700"
         >
           <input
             value={searched}
@@ -167,51 +113,113 @@ const Body = (props) => {
         </div>
       </div>
     </>
-
-    //   <div className="whole">
-    //     <div className="input">
-    //       <input
-    //         placeholder="Search....."
-    //         className="inp"
-    //         type="text"
-    //         value={searched}
-    //         onKeyPress={check}
-    //         onChange={(e) => {
-    // 			setSearched(e.target.value);
-    //         }}
-    // 		></input>
-    //       <button
-    //         disabled={isdisabled}
-    //         className="search"
-    //         onClick={() => {
-    //           clicked();
-    //         }}
-    //       >
-    //         search
-    //       </button>
-    //     </div>
-
-    //     <div className="box">
-    //       {final.toReversed().map((data, index) => {
-    //         return final.length > 0 ? (
-    //           <div className="content">
-    //             <h3>You</h3>
-    //             <h5 className="Ans">{data.myans.you}</h5>
-    //             <h3>MINI AI</h3>
-    //             {data.myans.message === "" ? (
-    //               <Loading />
-    //             ) : (
-    //               <h5> {data.myans.message}</h5>
-    //             )}
-    //             <hr className="line"></hr>
-    //           </div>
-    //         ) : (
-    //           <p>No data available</p>
-    //         );
-    //       })}
-    //     </div>
-    //   </div>
   );
 };
 
 export default Body;
+// import Loading from "./Loading.jsx";
+// import { useState, useEffect } from "react";
+// import { OLLAMA_BASE_ADDR } from "../utils/Constant.jsx";
+// const Body = (props) => {
+//   console.log(props.n);
+//   const [searched, setSearched] = useState("");
+//   const [val, setVal] = useState([]);
+//   const [ans, setAns] = useState("");
+//   const [final, setFinal] = useState([]);
+//   const [isdisabled, seteDisabled] = useState(false);
+//   var content = "";
+//   const data = async () => {
+//     seteDisabled(true);
+//     var response = await fetch(OLLAMA_BASE_ADDR + "/api/chat ", {
+//       method: "POST",
+//       headers: { "Content-Type": "text/plain" },
+//       body: JSON.stringify({
+//         model: props.n,
+//         messages: [{ role: "user", content: searched }],
+//         stream: false,
+//       }),
+//     });
+//     const maybe = await response.json();
+//     setFinal((prevFinal) => {
+//       const lastItemIndex = prevFinal.length - 1;
+//       const updatedFinal = [...prevFinal];
+//       updatedFinal[lastItemIndex] = {
+//         ...updatedFinal[lastItemIndex],
+//         myans: {
+//           you: searched,
+//           message: maybe.message.content,
+//         },
+//       };
+//       return updatedFinal;
+//     });
+//     seteDisabled(false);
+//   };
+
+//   const check = (event) => {
+//     if (event.key === "Enter" && !isdisabled) {
+//       clicked();
+//     }
+//   };
+//   const clicked = () => {
+//     if (searched === "") {
+//       alert("enter a prompt");
+//     } else {
+//       setFinal((files) => [
+//         ...files,
+//         {
+//           myans: {
+//             you: searched,
+//             message: "",
+//           },
+//         },
+//       ]);
+//       data();
+//     }
+
+//   <div className="whole">
+//     <div className="input">
+//       <input
+//         placeholder="Search....."
+//         className="inp"
+//         type="text"
+//         value={searched}
+//         onKeyPress={check}
+//         onChange={(e) => {
+// 			setSearched(e.target.value);
+//         }}
+// 		></input>
+//       <button
+//         disabled={isdisabled}
+//         className="search"
+//         onClick={() => {
+//           clicked();
+//         }}
+//       >
+//         search
+//       </button>
+//     </div>
+
+//     <div className="box">
+//       {final.toReversed().map((data, index) => {
+//         return final.length > 0 ? (
+//           <div className="content">
+//             <h3>You</h3>
+//             <h5 className="Ans">{data.myans.you}</h5>
+//             <h3>MINI AI</h3>
+//             {data.myans.message === "" ? (
+//               <Loading />
+//             ) : (
+//               <h5> {data.myans.message}</h5>
+//             )}
+//             <hr className="line"></hr>
+//           </div>
+//         ) : (
+//           <p>No data available</p>
+//         );
+//       })}
+//     </div>
+//   </div>
+//   );
+// };
+
+// export default Body;
