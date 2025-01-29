@@ -1,97 +1,49 @@
-import Loading from './Loading.jsx';
-import {useState,useEffect} from 'react';
-import {OLLAMA_BASE_ADDR} from "../utils/Constant.jsx"
-const Body = (props) => {
-	console.log(props.n);
-	const [searched, setSearched] = useState("");
-	 const [val, setVal] = useState([]);
-	const [ans, setAns] = useState("");
-	const [final, setFinal] = useState([]);
-	const [isdisabled, seteDisabled] = useState(false);
-	var content = "";
-	const data =  async ()  => {
-		seteDisabled(true);
-		var response = await fetch(OLLAMA_BASE_ADDR + '/api/chat ',
-			{method: 'POST',
-				headers:{ 'Content-Type': 'text/plain'},
-				body: JSON.stringify({
-					"model": props.n,
-					"messages": [
-						{ "role": "user", "content": searched,  }
-					], "stream": false})
-			});
-		const maybe = await response.json();
-		setFinal(prevFinal => {
-			const lastItemIndex = prevFinal.length - 1;
-			const updatedFinal = [...prevFinal];
-			updatedFinal[lastItemIndex] = {
-				...updatedFinal[lastItemIndex],
-				myans: {
-					you: searched,
-					message: maybe.message.content
-				}
-			};
-			 return updatedFinal;
-		});
-		seteDisabled(false);
-	}
+import React, { useState } from "react";
+import ClearChat from "./ClearChat.jsx";
 
-	const check = (event) => {
-		if(event.key==='Enter' && !isdisabled){
-			clicked();
-		}
-	}
-	const clicked = () => {
-		if(searched===""){
-			alert("enter a prompt");
-		}
-		else{
-			setFinal((files) => [...files,
-				{myans:{
-					you: searched,
-					message:""
-				}}] )
-			data();
-		}
-	}
-	return (
-		<div className="whole">
-		<div className="input">
-		<input placeholder="Search....." className="inp" type="text"  value={searched} onKeyPress={check} onChange = { (e) => {
-			setSearched(e.target.value);
-		}}></input>
-		<button disabled={isdisabled} className="search" onClick={() => {
-			clicked();
-		}}>search</button>
-		</div>
+const Body = ({ n }) => {
+  const [searched, setSearched] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
 
-		<div className="box"> 
-		{final.toReversed().map((data, index) => {
-			return (
-				final.length > 0  ? (
-					<div className="content">
-					<h3>You</h3>
-					<h5 className="Ans">{data.myans.you}</h5>
-					<h3>MINI AI</h3>
-					{data.myans.message===""  ? (
-						<Loading/>
-					) : (
-					<h5> {data.myans.message}</h5>
-					)}
-					<hr className="line"></hr>
-					</div>
-			) : (
-				<p>No data available</p>
-			)
-		)
-		})
-		}
-		</div>
-		</div>
-	);
+  const responseMap = {
+    Hello: "Hi there! How can I assist you today?",
+    "What is React?": "React is a JavaScript library for building user interfaces.",
+    "Tell me a joke": "Why don’t skeletons fight each other? They don’t have the guts!",
+    Goodbye: "Take care! See you soon.",
+  };
 
-}
+  const handleUserInput = () => {
+    if (searched.trim() === "") return;
+    const aiResponse = responseMap[searched] || "I don't have a response for that.";
+    setChatHistory([...chatHistory, { you: searched, ai: aiResponse }]);
+    setSearched("");
+  };
 
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") handleUserInput();
+  };
+
+  const clearChatHistory = () => setChatHistory([]);
+
+  return (
+    <>
+      <ClearChat onClearChat={clearChatHistory} />
+      <div className="w-screen h-screen flex flex-col justify-center items-center">
+        <div className="border border-gray-700 rounded-lg p-4 w-3/4 h-3/5 overflow-y-auto">
+          {chatHistory.length === 0 ? <p>What can I help with?</p> : 
+            chatHistory.map((chat, index) => (
+              <div key={index}>
+                <p>You: {chat.you}</p>
+                <p>AI: {chat.ai}</p>
+              </div>
+            ))
+          }
+        </div>
+        <input value={searched} onChange={(e) => setSearched(e.target.value)} onKeyPress={handleKeyPress} />
+        <button onClick={handleUserInput}>Send</button>
+      </div>
+    </>
+  );
+};
 
 export default Body;
-
