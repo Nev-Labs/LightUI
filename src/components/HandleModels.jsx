@@ -1,18 +1,20 @@
-import Body from './Body.jsx'
-import Models from './Models.jsx'
-import { useState, useEffect } from 'react'
+import React, { useState } from "react";
+import Body from "./Body.jsx";
+import ClearChat from "./ClearChat.jsx";
+
 function HandleModels() {
-	const [mname, setMname] = useState("");
-	function handlecallback(data){
-		setMname(data);
-	}
-	// console.log(mname);
-	return (
-		<>
-		{/* <Models onData={handlecallback}/> */}
-		<Body n={mname}></Body> 
-		</>
-	)
+  const [mname, setMname] = useState("");
+
+  function handleModelSelection(model) {
+    setMname(model);
+  }
+
+  return (
+    <>
+      <ClearChat onClearChat={() => setMname("")} />
+      <Body n={mname} />
+    </>
+  );
 }
 
 export default HandleModels;
